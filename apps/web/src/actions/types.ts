@@ -1,4 +1,5 @@
 import type { MutableRefObject } from "react";
+import { ACTIONS } from "./definitions";
 import type { TAction } from "./definitions";
 
 export type { TAction };
@@ -21,6 +22,20 @@ export type TActionWithArgs = keyof TActionArgsMap;
 export type TActionWithOptionalArgs =
 	| TActionWithNoArgs
 	| TKeysWithValueUndefined<TActionArgsMap>;
+
+const ACTIONS_WITH_REQUIRED_ARGS = new Set<TActionWithArgs>([
+	"remove-media-asset",
+	"remove-media-assets",
+]);
+
+export function isActionWithOptionalArgs(
+	value: string,
+): value is TActionWithOptionalArgs {
+	return (
+		Object.hasOwn(ACTIONS, value) &&
+		!ACTIONS_WITH_REQUIRED_ARGS.has(value as TActionWithArgs)
+	);
+}
 
 export type TActionWithNoArgs = Exclude<TAction, TActionWithArgs>;
 

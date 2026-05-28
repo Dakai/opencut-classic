@@ -13,6 +13,16 @@ export type ModifierKeys =
 	| "ctrl+alt"
 	| "ctrl+alt+shift";
 
+const MODIFIER_KEYS: readonly ModifierKeys[] = [
+	"ctrl",
+	"alt",
+	"shift",
+	"ctrl+shift",
+	"alt+shift",
+	"ctrl+alt",
+	"ctrl+alt+shift",
+];
+
 const KEYS = [
 	"a", "b", "c", "d", "e", "f", "g", "h", "i", "j",
 	"k", "l", "m", "n", "o", "p", "q", "r", "s", "t",
@@ -29,6 +39,19 @@ export type Key = (typeof KEYS)[number];
 const KEY_SET: ReadonlySet<string> = new Set(KEYS);
 
 export function isKey(value: string): value is Key {
+	return KEY_SET.has(value);
+}
+
+export function isShortcutKey(value: string): value is ShortcutKey {
+	const lastPlus = value.lastIndexOf("+");
+	if (lastPlus !== -1) {
+		const modifier = value.slice(0, lastPlus);
+		const key = value.slice(lastPlus + 1);
+		return (
+			(MODIFIER_KEYS as readonly string[]).includes(modifier) &&
+			KEY_SET.has(key)
+		);
+	}
 	return KEY_SET.has(value);
 }
 

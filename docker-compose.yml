@@ -59,13 +59,25 @@ services:
     restart: unless-stopped
     ports:
       - "3100:3000"
+
+
+    # Intel iGPU Hardware Passthrough for local Linux machine
+    devices:
+      - /dev/dri:/dev/dri
+    group_add:
+      - "985" # Replace with your host's actual 'video' GID (run: getent group video)
+      - "989" # Replace with your host's actual 'render' GID (run: getent group render)
+
     environment:
       - NODE_ENV=production
       - DATABASE_URL=postgresql://opencut:opencut@db:5432/opencut
-      - BETTER_AUTH_SECRET=your-production-secret-key-here
+      - BETTER_AUTH_SECRET=iok+iLcsVrdmYM+bTSpktWZXRgOhnZZ9IqA622ntjGo=
       - UPSTASH_REDIS_REST_URL=http://serverless-redis-http:80
       - UPSTASH_REDIS_REST_TOKEN=example_token
+
+      # REVERTED: Back to localhost for local machine access
       - NEXT_PUBLIC_SITE_URL=http://localhost:3100
+
       - NEXT_PUBLIC_MARBLE_API_URL=https://api.marblecms.com
       - MARBLE_WORKSPACE_KEY=${MARBLE_WORKSPACE_KEY:-placeholder}
       - FREESOUND_CLIENT_ID=${FREESOUND_CLIENT_ID}
@@ -81,7 +93,6 @@ services:
       timeout: 10s
       retries: 5
       start_period: 30s
-
 volumes:
   postgres_data:
 
